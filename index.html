@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Трек Звёзд — трекер дел</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF3E3;
+    --paper-deep:#F3E7CE;
+    --ink:#1F3A5F;
+    --ink-soft:#3F5878;
+    --gold:#E8A33D;
+    --gold-deep:#C9821F;
+    --coral:#E2654B;
+    --coral-deep:#C24B33;
+    --green:#5B8C5A;
+    --green-deep:#3F6B3E;
+    --red:#C24B4B;
+    --line:#1F3A5F22;
+    --card-shadow: 0 6px 0 #1F3A5F14, 0 10px 24px -8px #1F3A5F2A;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 8% 12%, #ffffff55 0, transparent 40%),
+      radial-gradient(circle at 92% 85%, #ffffff44 0, transparent 45%),
+      var(--paper);
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding:20px 14px 60px;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+
+  header.top{
+    display:flex; align-items:baseline; justify-content:space-between;
+    gap:12px; margin-bottom:18px; flex-wrap:wrap;
+  }
+  header.top h1{
+    font-family:'Baloo 2', sans-serif; font-weight:800;
+    font-size:clamp(26px,5vw,38px); margin:0; color:var(--ink); letter-spacing:0.5px;
+  }
+  header.top h1 .dot{color:var(--gold-deep);}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+  button{
+    font-family:'Nunito', sans-serif; font-weight:700; border:none;
+    cursor:pointer; border-radius:12px;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  button:focus-visible{outline:3px solid var(--ink); outline-offset:2px;}
+  button:active{transform:translateY(1px);}
+  button:disabled{cursor:not-allowed; opacity:.6;}
+
+  .btn-ghost{background:#ffffffa0; color:var(--ink); border:2px solid var(--line); padding:9px 14px; font-size:14px;}
+  .btn-ghost:hover{background:#fff;}
+  .btn-dark{background:var(--ink); color:#fff; padding:10px 18px; font-size:14px; border-radius:12px;}
+  .btn-green{background:var(--green); color:#fff; padding:9px 16px; font-size:14px;}
+  .btn-red{background:#fff; color:var(--red); border:2px solid var(--red); padding:9px 16px; font-size:14px;}
+
+  .sync-dot{
+    display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px;
+    background:#ccc;
+  }
+  .sync-dot.ok{background:var(--green);}
+  .sync-dot.err{background:var(--red);}
+  .sync-label{font-size:13px; color:var(--ink-soft); font-weight:600;}
+
+  /* ---------- Mode switch ---------- */
+  .mode-switch{display:flex; gap:8px; margin-bottom:18px;}
+  .mode-btn{
+    flex:1; padding:13px; border-radius:14px; font-family:'Baloo 2',sans-serif;
+    font-size:16px; background:#ffffffa8; color:var(--ink-soft); box-shadow:var(--card-shadow);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .mode-btn.active{background:var(--ink); color:#fff;}
+
+  /* ---------- Child tabs ---------- */
+  .tabs{display:flex; gap:10px; margin-bottom:18px;}
+  .tab{
+    flex:1; padding:14px 16px; border-radius:16px; border:3px solid transparent;
+    background:#ffffffa8; text-align:left; font-family:'Baloo 2', sans-serif; font-size:17px;
+    font-weight:700; color:var(--ink-soft); display:flex; align-items:center; gap:10px;
+    box-shadow:var(--card-shadow);
+  }
+  .tab .avatar{
+    width:34px;height:34px;border-radius:50%; display:flex;align-items:center;justify-content:center;
+    font-size:18px; flex-shrink:0; background:#ffffffc0;
+  }
+  .tab.active{border-color:var(--ink); background:#fff; color:var(--ink);}
+  .tab[data-child="0"].active .avatar{background:var(--gold);}
+  .tab[data-child="1"].active .avatar{background:var(--coral);}
+
+  .card{background:#fffdf8; border-radius:20px; padding:20px; box-shadow:var(--card-shadow); margin-bottom:18px;}
+
+  /* ---------- Track ---------- */
+  .track-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px; gap:10px; flex-wrap:wrap;}
+  .track-head .stars-count{font-family:'Baloo 2', sans-serif; font-size:32px; font-weight:800; color:var(--gold-deep);}
+  .track-head .stars-count span{font-size:17px; color:var(--ink-soft); font-weight:600;}
+  .reward-target{text-align:right; font-size:14px; color:var(--ink-soft); font-weight:700;}
+  .reward-target b{color:var(--ink); font-family:'Baloo 2',sans-serif; font-size:16px;}
+
+  .track{position:relative; display:flex; align-items:center; overflow-x:auto; padding:18px 6px 30px; -webkit-overflow-scrolling:touch;}
+  .track::after{content:""; position:absolute; left:14px; right:14px; top:38px; height:6px; background:var(--paper-deep); border-radius:6px; z-index:0;}
+  .cell{
+    position:relative; z-index:1; min-width:44px; height:44px; border-radius:50%; background:#fff;
+    border:3px solid var(--paper-deep); display:flex; align-items:center; justify-content:center;
+    font-size:17px; margin-right:14px; flex-shrink:0; transition:all .25s ease;
+  }
+  .cell.filled{background:var(--gold); border-color:var(--gold-deep); box-shadow:0 3px 0 var(--gold-deep);}
+  .cell.flag{background:var(--paper); border-color:var(--coral); font-size:19px;}
+  .cell.flag.reached{background:var(--coral); border-color:var(--coral-deep);}
+  .token{position:absolute; top:-2px; font-size:28px; transform:translateX(-50%); transition:left .4s cubic-bezier(.34,1.56,.64,1); filter:drop-shadow(0 3px 2px rgba(0,0,0,.25)); z-index:2;}
+  .empty-reward{font-size:14px; color:var(--ink-soft); text-align:center; padding:10px 0 0;}
+
+  .section-title{font-family:'Baloo 2', sans-serif; font-weight:700; font-size:19px; margin:0 0 14px; display:flex; align-items:center; gap:8px;}
+  .count-pill{background:var(--paper-deep); color:var(--ink-soft); font-size:13px; font-weight:800; padding:2px 10px; border-radius:999px;}
+
+  .chore-list, .reward-list, .sub-list{display:flex; flex-direction:column; gap:10px;}
+  .chore{display:flex; align-items:center; gap:12px; background:var(--paper); border-radius:14px; padding:12px 14px; flex-wrap:wrap;}
+  .chore .emoji{font-size:22px; width:28px; text-align:center;}
+  .chore .name{flex:1; font-weight:700; font-size:15px; min-width:90px;}
+  .chore .value{font-size:13px; color:var(--gold-deep); font-weight:800;}
+  .chore-status{font-size:12px; font-weight:800; padding:4px 10px; border-radius:999px;}
+  .chore-status.pending{background:#FFF3D6; color:var(--gold-deep);}
+  .btn-snap{background:var(--gold); color:#5a3c0e; padding:9px 14px; font-size:13px; border-radius:10px;}
+
+  .reward{display:flex; align-items:center; gap:12px; background:var(--paper); border-radius:14px; padding:12px 14px;}
+  .reward .emoji{font-size:22px;width:28px;text-align:center;}
+  .reward .name{flex:1; font-weight:700; font-size:15px;}
+  .reward .cost{font-size:13px; font-weight:800; color:var(--gold-deep);}
+  .reward-claim{padding:8px 12px; font-size:13px; background:var(--ink); color:#fff; border-radius:10px;}
+  .reward-claim:disabled{background:#cfd6e0; color:#8993a4;}
+  .icon-del{width:32px;height:32px;border-radius:9px;background:transparent;border:none;color:#9aa6b8;font-size:16px;padding:0;}
+  .icon-del:hover{color:var(--coral-deep);}
+
+  .add-row{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .add-row input{font-family:'Nunito',sans-serif; font-size:14px; padding:10px 12px; border-radius:10px; border:2px solid var(--line); background:#fff;}
+  .add-row input[name="name"]{flex:2; min-width:140px;}
+  .add-row input[name="num"]{width:90px;}
+
+  .empty-state{text-align:center; padding:20px; color:var(--ink-soft); font-size:14px;}
+
+  .reject-banner{
+    background:#FBE3E1; border:2px solid var(--red); border-radius:14px; padding:12px 14px; margin-bottom:14px;
+    font-size:14px; color:#7a2727; display:flex; gap:10px; align-items:flex-start;
+  }
+  .reject-banner .x{font-size:20px;}
+  .reject-banner b{display:block; margin-bottom:2px;}
+  .reject-dismiss{margin-left:auto; background:transparent; border:none; color:#7a2727; font-size:14px; flex-shrink:0;}
+
+  .sub-card{background:var(--paper); border-radius:16px; padding:14px; display:flex; gap:14px; flex-wrap:wrap;}
+  .sub-card img{width:96px; height:96px; object-fit:cover; border-radius:12px; border:2px solid var(--line); flex-shrink:0; cursor:pointer;}
+  .sub-info{flex:1; min-width:160px;}
+  .sub-info .who{font-family:'Baloo 2',sans-serif; font-weight:700; font-size:15px; margin-bottom:2px;}
+  .sub-info .what{font-size:14px; color:var(--ink-soft); margin-bottom:6px;}
+  .sub-info .when{font-size:12px; color:var(--ink-soft); opacity:.8;}
+  .sub-actions{display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap;}
+  .reason-box{width:100%; margin-top:10px; display:none;}
+  .reason-box.show{display:block;}
+  .reason-box textarea{width:100%; font-family:'Nunito',sans-serif; font-size:14px; border-radius:10px; border:2px solid var(--line); padding:8px 10px; resize:vertical; min-height:50px;}
+  .reason-box .reason-confirm{margin-top:6px; background:var(--red); color:#fff; padding:7px 14px; font-size:13px;}
+
+  .settings-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media (max-width:640px){.settings-grid{grid-template-columns:1fr;}}
+  .name-edit{display:flex; gap:8px; margin-bottom:14px;}
+  .name-edit input{flex:1; font-family:'Nunito',sans-serif; font-size:14px; padding:8px 10px; border-radius:10px; border:2px solid var(--line);}
+
+  /* ---------- Lock screen ---------- */
+  .lock-wrap{max-width:340px; margin:60px auto; text-align:center;}
+  .lock-wrap .emoji{font-size:48px; margin-bottom:10px;}
+  .lock-wrap input{width:100%; font-size:16px; padding:12px 14px; border-radius:12px; border:2px solid var(--line); margin:14px 0; text-align:center; font-family:'Nunito',sans-serif;}
+  .lock-wrap .err{color:var(--red); font-size:13px; min-height:18px; margin-bottom:6px;}
+
+  /* ---------- Setup screen ---------- */
+  .setup-wrap{max-width:520px; margin:0 auto;}
+  .setup-wrap h2{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:24px; margin:0 0 6px;}
+  .setup-wrap p{color:var(--ink-soft); font-size:14px; margin:0 0 18px; line-height:1.6;}
+  .setup-steps{background:var(--paper-deep); border-radius:14px; padding:16px 18px; margin-bottom:18px;}
+  .setup-steps ol{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px; font-size:14px; line-height:1.5;}
+  .setup-steps a{color:var(--ink); font-weight:700;}
+  .setup-steps code{background:#fffdf8; padding:2px 6px; border-radius:6px; font-size:13px;}
+  .setup-input-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .setup-input-row input{flex:1; min-width:220px; font-family:'Nunito',sans-serif; font-size:14px; padding:11px 14px; border-radius:12px; border:2px solid var(--line); background:#fff;}
+  .setup-err{color:var(--red); font-size:13px; min-height:18px; margin-top:6px;}
+  .setup-footer{margin-top:14px; font-size:13px; color:var(--ink-soft);}
+
+  footer{text-align:center; font-size:12px; color:var(--ink-soft); margin-top:30px; opacity:.7;}
+
+  .overlay{position:fixed; inset:0; background:#1F3A5F66; display:none; align-items:center; justify-content:center; padding:20px; z-index:50;}
+  .overlay.show{display:flex;}
+  .modal{background:#fffdf8; border-radius:20px; padding:24px; max-width:380px; width:100%; box-shadow:0 20px 50px -10px #1f3a5f55; text-align:center;}
+  .modal .big-emoji{font-size:54px;}
+  .modal h2{font-family:'Baloo 2',sans-serif; margin:8px 0 4px; color:var(--ink);}
+  .modal p{color:var(--ink-soft); margin:0 0 18px; font-size:15px;}
+  .modal button{background:var(--gold); color:#5a3c0e; padding:10px 22px; font-size:15px;}
+
+  .photo-modal img{max-width:100%; max-height:60vh; border-radius:14px; margin-bottom:14px;}
+  .photo-modal{max-width:480px;}
+
+  .snap-modal{max-width:380px;}
+  .snap-modal .preview{width:100%; max-height:280px; object-fit:contain; border-radius:14px; margin:10px 0; background:var(--paper-deep);}
+  .snap-modal input[type=file]{margin:10px 0;}
+  .snap-modal .row{display:flex; gap:10px; justify-content:center; margin-top:14px;}
+
+  /* Share modal */
+  .share-modal{max-width:420px;}
+  .share-url-box{
+    background:var(--paper-deep); border-radius:12px; padding:12px 14px;
+    font-size:13px; word-break:break-all; margin:12px 0; text-align:left;
+    border:2px solid var(--line); font-family:monospace; color:var(--ink);
+    user-select:all;
+  }
+  .share-modal .row{display:flex; gap:8px; justify-content:center; margin-top:4px;}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(10px);
+    background:var(--ink); color:#fff; padding:12px 20px; border-radius:14px; font-size:14px; font-weight:700;
+    box-shadow:0 10px 30px -8px #1f3a5f66; opacity:0; transition:all .25s ease; z-index:60; max-width:90vw; text-align:center;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  .loading-state{text-align:center; padding:60px 20px; color:var(--ink-soft); font-size:15px;}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none !important;}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="loading-state">Загружаем трекер… ⭐</div>
+</div>
+
+<div class="overlay" id="celebrate">
+  <div class="modal">
+    <div class="big-emoji" id="celebrateEmoji">🎉</div>
+    <h2 id="celebrateTitle">Награда получена!</h2>
+    <p id="celebrateText"></p>
+    <button id="celebrateClose">Ура!</button>
+  </div>
+</div>
+
+<div class="overlay" id="photoModal">
+  <div class="modal photo-modal">
+    <img id="photoModalImg" src="" alt="Фото подтверждения">
+    <button id="photoModalClose">Закрыть</button>
+  </div>
+</div>
+
+<div class="overlay" id="snapModal">
+  <div class="modal snap-modal">
+    <h2 id="snapTitle">Сфоткай результат</h2>
+    <p id="snapSubtitle">Покажи, что дело сделано</p>
+    <img class="preview" id="snapPreview" style="display:none;">
+    <input type="file" id="snapInput" accept="image/*" capture="environment">
+    <div class="row">
+      <button class="btn-ghost" id="snapCancel">Отмена</button>
+      <button class="btn-dark" id="snapSend" disabled>Отправить на проверку</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="shareModal">
+  <div class="modal share-modal">
+    <div class="big-emoji">🔗</div>
+    <h2>Ссылка для семьи</h2>
+    <p style="margin:0 0 4px; font-size:14px; color:var(--ink-soft);">Открой на любом устройстве — данные синхронизируются автоматически.</p>
+    <div class="share-url-box" id="shareUrlBox"></div>
+    <div class="row">
+      <button class="btn-dark" id="copyLinkBtn">📋 Скопировать</button>
+      <button class="btn-ghost" id="shareClose">Закрыть</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var PARENT_PASSWORD = "семья2026";
+  var nextLocalId = 1;
+
+  function genId(){
+    nextLocalId += 1;
+    return Date.now().toString(36) + "-" + nextLocalId.toString(36);
+  }
+
+  // ---------- Firebase config ----------
+  var fbBaseUrl = localStorage.getItem("fb-base-url") || "";
+  // Family code lives in URL hash so sharing is just sharing the URL
+  var familyCode = (location.hash || "").replace(/^#/, "").trim();
+  if(!familyCode){
+    familyCode = genRandomCode();
+    location.replace(location.href.split("#")[0] + "#" + familyCode);
+  }
+  localStorage.setItem("family-code", familyCode);
+
+  function genRandomCode(){
+    var chars = "abcdefghjkmnpqrstuvwxyz23456789";
+    var s = "";
+    for(var i=0; i<16; i++) s += chars[Math.floor(Math.random() * chars.length)];
+    return s;
+  }
+
+  function dbUrl(){
+    return fbBaseUrl.replace(/\/$/, "") + "/families/" + familyCode + ".json";
+  }
+
+  // ---------- Default state ----------
+  var defaultState = {
+    children: [
+      { id:0, name:"Амиль", emoji:"🐯", stars:0,
+        chores:[
+          {id:"c0-1", name:"Убрать игрушки", emoji:"🧸", value:1},
+          {id:"c0-2", name:"Почистить зубы", emoji:"🪥", value:1},
+          {id:"c0-3", name:"Сделать уроки", emoji:"📚", value:2}
+        ],
+        rewards:[
+          {id:"r0-1", name:"Мороженое", emoji:"🍦", cost:10},
+          {id:"r0-2", name:"30 минут игры", emoji:"🎮", cost:15},
+          {id:"r0-3", name:"Поход в кино", emoji:"🎬", cost:40}
+        ]
+      },
+      { id:1, name:"Ильяс", emoji:"🦊", stars:0,
+        chores:[
+          {id:"c1-1", name:"Убрать игрушки", emoji:"🧸", value:1},
+          {id:"c1-2", name:"Почистить зубы", emoji:"🪥", value:1},
+          {id:"c1-3", name:"Сделать уроки", emoji:"📚", value:2}
+        ],
+        rewards:[
+          {id:"r1-1", name:"Мороженое", emoji:"🍦", cost:10},
+          {id:"r1-2", name:"30 минут игры", emoji:"🎮", cost:15},
+          {id:"r1-3", name:"Поход в кино", emoji:"🎬", cost:40}
+        ]
+      }
+    ],
+    submissions: [],
+    history: []
+  };
+
+  var state = null;
+  var ui = {
+    mode: "child",
+    activeChild: 0,
+    parentUnlocked: false,
+    pendingPhotoFor: null,
+    reasonOpenFor: null
+  };
+  var syncOk = false;
+  var lastSaveTime = 0;
+  var pollInterval = null;
+
+  // ---------- Sync ----------
+  function fetchState(){
+    return fetch(dbUrl())
+      .then(function(r){
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function(data){
+        syncOk = true;
+        if(data && data.children && data.children.length >= 2){
+          if(!data.submissions) data.submissions = [];
+          if(!data.history) data.history = [];
+          return data;
+        }
+        return null;
+      });
+  }
+
+  function pushState(){
+    lastSaveTime = Date.now();
+    return fetch(dbUrl(), {
+      method: "PUT",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(state)
+    })
+    .then(function(r){
+      if(!r.ok) throw new Error("HTTP " + r.status);
+      syncOk = true;
+      updateSyncIndicator();
+    })
+    .catch(function(err){
+      console.error("Save error:", err);
+      syncOk = false;
+      updateSyncIndicator();
+      showToast("Не удалось сохранить — проверь интернет");
+    });
+  }
+
+  var saveTimer = null;
+  function saveState(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(pushState, 400);
+  }
+
+  function startPolling(){
+    stopPolling();
+    pollInterval = setInterval(function(){
+      if(Date.now() - lastSaveTime < 3000) return; // don't overwrite just-saved data
+      fetchState().then(function(data){
+        if(!data) return;
+        // Merge only if remote is newer (simple: compare history length as proxy)
+        var remoteHistLen = (data.history || []).length;
+        var localHistLen = (state.history || []).length;
+        if(remoteHistLen !== localHistLen ||
+           JSON.stringify(data.children) !== JSON.stringify(state.children) ||
+           (data.submissions||[]).length !== (state.submissions||[]).length){
+          state = data;
+          render();
+        }
+        updateSyncIndicator();
+      }).catch(function(){
+        syncOk = false;
+        updateSyncIndicator();
+      });
+    }, 6000);
+  }
+
+  function stopPolling(){
+    if(pollInterval) clearInterval(pollInterval);
+    pollInterval = null;
+  }
+
+  function updateSyncIndicator(){
+    var dot = document.getElementById("syncDot");
+    var lbl = document.getElementById("syncLabel");
+    if(!dot) return;
+    dot.className = "sync-dot " + (syncOk ? "ok" : "err");
+    lbl.textContent = syncOk ? "Синхронизировано" : "Нет связи";
+  }
+
+  // ---------- Utils ----------
+  function showToast(msg){
+    var t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+
+  function escapeHtml(s){
+    var div = document.createElement("div");
+    div.textContent = s == null ? "" : String(s);
+    return div.innerHTML;
+  }
+
+  function addHistory(text){
+    var d = new Date();
+    var dateStr = d.toLocaleDateString("ru-RU") + " " + d.toLocaleTimeString("ru-RU", {hour:"2-digit", minute:"2-digit"});
+    state.history.push({text:text, date:dateStr});
+    if(state.history.length > 300) state.history = state.history.slice(-300);
+  }
+
+  function activeChild(){ return state.children[ui.activeChild]; }
+  function childById(id){ return state.children.find(function(c){ return c.id === id; }); }
+
+  function familyUrl(){
+    return location.href.split("#")[0] + "#" + familyCode;
+  }
+
+  // ---------- Image compression ----------
+  function compressImage(file, maxDim, quality){
+    return new Promise(function(resolve, reject){
+      var reader = new FileReader();
+      reader.onload = function(e){
+        var img = new Image();
+        img.onload = function(){
+          var w = img.width, h = img.height;
+          if(w > h && w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+          else if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+          var canvas = document.createElement("canvas");
+          canvas.width = w; canvas.height = h;
+          canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.onerror = function(){ reject(new Error("bad image")); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function(){ reject(new Error("bad file")); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ================= SETUP SCREEN =================
+  function renderSetup(){
+    return '' +
+      '<header class="top"><h1>Трек Звёзд<span class="dot">.</span></h1></header>' +
+      '<div class="setup-wrap">' +
+        '<div class="card">' +
+          '<h2>👋 Добро пожаловать!</h2>' +
+          '<p>Чтобы данные синхронизировались между телефоном мамы, папы и планшетом — нужна бесплатная база данных Firebase. Это займёт ~5 минут, один раз.</p>' +
+          '<div class="setup-steps">' +
+            '<ol>' +
+              '<li>Зайди на <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> (нужен Google-аккаунт)</li>' +
+              '<li>Нажми <b>«Создать проект»</b>, дай любое имя, отключи Analytics, создай</li>' +
+              '<li>В левом меню выбери <b>Сборка → Realtime Database</b></li>' +
+              '<li>Нажми <b>«Создать базу данных»</b>, выбери регион, выбери <b>«Начать в тестовом режиме»</b></li>' +
+              '<li>Скопируй URL базы данных — он выглядит так:<br><code>https://имя-проекта-default-rtdb.firebaseio.com</code></li>' +
+              '<li>Вставь его ниже и нажми <b>«Подключить»</b></li>' +
+            '</ol>' +
+          '</div>' +
+          '<div class="setup-input-row">' +
+            '<input type="url" id="fbUrlInput" placeholder="https://мой-проект-default-rtdb.firebaseio.com" autocomplete="off">' +
+            '<button class="btn-dark" id="setupSaveBtn">Подключить →</button>' +
+          '</div>' +
+          '<div class="setup-err" id="setupErr"></div>' +
+          '<p class="setup-footer">Данные хранятся в твоём собственном Firebase-проекте. Мы не имеем к ним доступа.</p>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function bindSetup(){
+    var input = document.getElementById("fbUrlInput");
+    var btn = document.getElementById("setupSaveBtn");
+    var err = document.getElementById("setupErr");
+
+    function tryConnect(){
+      var val = input.value.trim().replace(/\/$/, "");
+      if(!val || !val.startsWith("https://")){
+        err.textContent = "Введи корректный URL, начинающийся с https://";
+        return;
+      }
+      err.textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Проверяем…";
+      // Test connection
+      fetch(val + "/families/" + familyCode + ".json")
+        .then(function(r){
+          if(!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function(data){
+          fbBaseUrl = val;
+          localStorage.setItem("fb-base-url", fbBaseUrl);
+          syncOk = true;
+          if(data && data.children && data.children.length >= 2){
+            state = data;
+            if(!state.submissions) state.submissions = [];
+            if(!state.history) state.history = [];
+          } else {
+            state = JSON.parse(JSON.stringify(defaultState));
+            pushState();
+          }
+          render();
+          startPolling();
+        })
+        .catch(function(e){
+          btn.disabled = false;
+          btn.textContent = "Подключить →";
+          err.textContent = "Не удалось подключиться. Проверь URL и правила доступа (тестовый режим).";
+        });
+    }
+
+    btn.addEventListener("click", tryConnect);
+    input.addEventListener("keydown", function(e){ if(e.key==="Enter") tryConnect(); });
+  }
+
+  // ================= RENDER =================
+  function render(){
+    var app = document.getElementById("app");
+
+    if(!fbBaseUrl){
+      app.innerHTML = renderSetup();
+      bindSetup();
+      return;
+    }
+
+    if(ui.mode === "parent" && !ui.parentUnlocked){
+      app.innerHTML = renderLockScreen();
+      bindLockScreen();
+      return;
+    }
+    app.innerHTML =
+      renderHeader() +
+      renderModeSwitch() +
+      (ui.mode === "child" ? renderChildView() : renderParentView());
+    bindCommon();
+    if(ui.mode === "child") bindChildView();
+    else bindParentView();
+    updateSyncIndicator();
+  }
+
+  function renderHeader(){
+    return '' +
+      '<header class="top">' +
+        '<h1>Трек Звёзд<span class="dot">.</span></h1>' +
+        '<div class="top-actions">' +
+          '<span class="sync-label"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">…</span></span>' +
+          '<button class="btn-ghost" id="shareLinkBtn">🔗 Ссылка</button>' +
+          (ui.mode === "parent" ? '<button class="btn-ghost" id="lockBtn">🔒 Выйти</button>' : '') +
+        '</div>' +
+      '</header>';
+  }
+
+  function renderModeSwitch(){
+    return '' +
+      '<div class="mode-switch">' +
+        '<button class="mode-btn'+(ui.mode==="child"?" active":"")+'" data-mode="child">🧒 Я ребёнок</button>' +
+        '<button class="mode-btn'+(ui.mode==="parent"?" active":"")+'" data-mode="parent">👨‍👩‍👧 Я родитель</button>' +
+      '</div>';
+  }
+
+  function renderLockScreen(){
+    return '' +
+      renderHeader() +
+      renderModeSwitch() +
+      '<div class="lock-wrap">' +
+        '<div class="emoji">🔒</div>' +
+        '<div style="font-family:\'Baloo 2\',sans-serif; font-weight:700; font-size:18px;">Режим родителя</div>' +
+        '<input type="password" id="parentPass" placeholder="Пароль" autocomplete="off">' +
+        '<div class="err" id="lockErr"></div>' +
+        '<button class="btn-dark" id="unlockBtn" style="width:100%;">Войти</button>' +
+      '</div>';
+  }
+
+  function bindLockScreen(){
+    document.querySelectorAll(".mode-btn").forEach(function(b){
+      b.addEventListener("click", function(){ ui.mode = b.getAttribute("data-mode"); render(); });
+    });
+    var shareLinkBtn = document.getElementById("shareLinkBtn");
+    if(shareLinkBtn) shareLinkBtn.addEventListener("click", openShareModal);
+
+    var input = document.getElementById("parentPass");
+    var btn = document.getElementById("unlockBtn");
+    function tryUnlock(){
+      if(input.value === PARENT_PASSWORD){
+        ui.parentUnlocked = true;
+        render();
+      } else {
+        document.getElementById("lockErr").textContent = "Неверный пароль, попробуй ещё раз";
+        input.value = "";
+        input.focus();
+      }
+    }
+    btn.addEventListener("click", tryUnlock);
+    input.addEventListener("keydown", function(e){ if(e.key === "Enter") tryUnlock(); });
+    input.focus();
+    updateSyncIndicator();
+  }
+
+  function bindCommon(){
+    document.querySelectorAll(".mode-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        ui.mode = b.getAttribute("data-mode");
+        render();
+      });
+    });
+    var lockBtn = document.getElementById("lockBtn");
+    if(lockBtn) lockBtn.addEventListener("click", function(){
+      ui.parentUnlocked = false;
+      ui.mode = "child";
+      render();
+    });
+    var shareLinkBtn = document.getElementById("shareLinkBtn");
+    if(shareLinkBtn) shareLinkBtn.addEventListener("click", openShareModal);
+  }
+
+  // ================= CHILD VIEW =================
+  function renderChildView(){
+    var c = activeChild();
+    var myPending = state.submissions.filter(function(s){ return s.childId === c.id && s.status === "pending"; });
+    var myRejected = state.submissions.filter(function(s){ return s.childId === c.id && s.status === "rejected" && !s.seen; });
+
+    var html = '<div class="tabs">';
+    state.children.forEach(function(ch, idx){
+      html += '<button class="tab'+(idx===ui.activeChild?" active":"")+'" data-child="'+idx+'">' +
+        '<span class="avatar">'+ch.emoji+'</span>'+escapeHtml(ch.name)+' · '+ch.stars+' ⭐</button>';
+    });
+    html += '</div>';
+
+    myRejected.forEach(function(s){
+      html += '<div class="reject-banner">' +
+        '<span class="x">😕</span>' +
+        '<div><b>«'+escapeHtml(s.choreName)+'» пока не приняли</b>' + escapeHtml(s.reason || "Попробуй сделать ещё раз и сфоткать заново.") + '</div>' +
+        '<button class="reject-dismiss" data-dismiss="'+s.id+'">✕</button>' +
+      '</div>';
+    });
+
+    html += renderTrackHtml(c);
+
+    html += '<div class="card"><div class="section-title">📋 Мои дела <span class="count-pill">'+c.chores.length+'</span></div><div class="chore-list">';
+    if(c.chores.length === 0){
+      html += '<div class="empty-state">Дел пока нет — родители скоро добавят 👨‍👩‍👧</div>';
+    } else {
+      c.chores.forEach(function(ch){
+        var pending = myPending.find(function(s){ return s.choreId === ch.id; });
+        html += '<div class="chore">' +
+          '<div class="emoji">'+ch.emoji+'</div>' +
+          '<div class="name">'+escapeHtml(ch.name)+'</div>' +
+          '<div class="value">+'+ch.value+' ⭐</div>' +
+          (pending
+            ? '<span class="chore-status pending">⏳ На проверке</span>'
+            : '<button class="btn-snap" data-action="snap" data-chore="'+ch.id+'">📷 Сделал!</button>') +
+          '</div>';
+      });
+    }
+    html += '</div></div>';
+
+    html += '<div class="card"><div class="section-title">🎁 Мои награды <span class="count-pill">'+c.rewards.length+'</span></div><div class="reward-list">';
+    if(c.rewards.length === 0){
+      html += '<div class="empty-state">Наград пока нет — родители скоро добавят 🎁</div>';
+    } else {
+      c.rewards.slice().sort(function(a,b){return a.cost-b.cost;}).forEach(function(r){
+        var canClaim = c.stars >= r.cost;
+        html += '<div class="reward">' +
+          '<div class="emoji">'+r.emoji+'</div>' +
+          '<div class="name">'+escapeHtml(r.name)+'</div>' +
+          '<div class="cost">'+r.cost+' ⭐</div>' +
+          '<button class="reward-claim" data-action="claim" data-reward="'+r.id+'" '+(canClaim?"":"disabled")+'>Забрать</button>' +
+          '</div>';
+      });
+    }
+    html += '</div></div>';
+
+    html += '<footer>Трек Звёзд — семейный трекер дел</footer>';
+    return html;
+  }
+
+  function renderTrackHtml(c){
+    var rewards = c.rewards.slice().sort(function(a,b){ return a.cost - b.cost; });
+    if(rewards.length === 0){
+      return '<div class="card"><div class="track-head"><div class="stars-count">'+c.stars+' <span>⭐ звёзд сейчас</span></div></div>' +
+        '<div class="empty-reward">Пока нет наград — добавь их в режиме родителя, и фишка побежит по дорожке 👇</div></div>';
+    }
+    var maxCost = rewards[rewards.length-1].cost;
+    var nextReward = rewards.find(function(r){ return c.stars < r.cost; });
+    var rewardAtCell = {};
+    rewards.forEach(function(r){ rewardAtCell[r.cost] = r; });
+
+    var cells = "";
+    for(var i=1; i<=maxCost; i++){
+      var isFlag = !!rewardAtCell[i];
+      var cls = "cell" + (i <= c.stars ? " filled" : "") + (isFlag ? " flag" : "") + (isFlag && c.stars >= i ? " reached" : "");
+      cells += '<div class="'+cls+'" title="'+(isFlag ? escapeHtml(rewardAtCell[i].name)+" ("+i+" ⭐)" : i+" ⭐")+'">'+(isFlag ? rewardAtCell[i].emoji : "")+'</div>';
+    }
+    var cellWidth = 44 + 14;
+    var pos = Math.max(0, Math.min(c.stars, maxCost));
+    var tokenLeft = 14 + pos * cellWidth - (pos > 0 ? cellWidth/2 : -10);
+
+    return '' +
+      '<div class="card track-card">' +
+        '<div class="track-head">' +
+          '<div class="stars-count">'+c.stars+' <span>⭐ звёзд сейчас</span></div>' +
+          '<div class="reward-target">'+(nextReward ? 'До «'+escapeHtml(nextReward.name)+'» '+nextReward.emoji+': <b>'+(nextReward.cost - c.stars)+' ⭐</b>' : 'Все награды доступны! 🎉')+'</div>' +
+        '</div>' +
+        '<div class="track" id="trackEl" style="position:relative;">' + cells +
+          '<div class="token" id="tokenEl" style="left:'+tokenLeft+'px;">'+c.emoji+'</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  function bindChildView(){
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.addEventListener("click", function(){
+        ui.activeChild = Number(t.getAttribute("data-child"));
+        render();
+      });
+    });
+
+    document.querySelectorAll('[data-action="snap"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var chore = activeChild().chores.find(function(c){ return c.id === btn.getAttribute("data-chore"); });
+        if(chore) openSnapModal(chore);
+      });
+    });
+
+    document.querySelectorAll('[data-action="claim"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var c = activeChild();
+        var reward = c.rewards.find(function(r){ return r.id === btn.getAttribute("data-reward"); });
+        if(!reward || c.stars < reward.cost) return;
+        c.stars -= reward.cost;
+        addHistory(c.name+": забрал награду "+reward.emoji+" "+reward.name+" (-"+reward.cost+" ⭐)");
+        saveState();
+        render();
+        openCelebration(reward);
+      });
+    });
+
+    document.querySelectorAll('[data-dismiss]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var sub = state.submissions.find(function(s){ return s.id === btn.getAttribute("data-dismiss"); });
+        if(sub) sub.seen = true;
+        saveState();
+        render();
+      });
+    });
+
+    var track = document.getElementById("trackEl");
+    var token = document.getElementById("tokenEl");
+    if(track && token){
+      requestAnimationFrame(function(){
+        var rect = token.getBoundingClientRect();
+        var trackRect = track.getBoundingClientRect();
+        if(rect.left < trackRect.left || rect.right > trackRect.right){
+          track.scrollLeft = Math.max(0, token.offsetLeft - track.clientWidth/2);
+        }
+      });
+    }
+  }
+
+  // ---------- Snap modal ----------
+  function openSnapModal(chore){
+    ui.pendingPhotoFor = chore;
+    var modal = document.getElementById("snapModal");
+    document.getElementById("snapTitle").textContent = chore.emoji + " " + chore.name;
+    document.getElementById("snapSubtitle").textContent = "Сфоткай результат, чтобы родители проверили";
+    var preview = document.getElementById("snapPreview");
+    preview.style.display = "none"; preview.src = "";
+    document.getElementById("snapInput").value = "";
+    document.getElementById("snapSend").disabled = true;
+    modal.classList.add("show");
+  }
+
+  var compressedPhotoData = null;
+
+  document.getElementById("snapInput").addEventListener("change", function(e){
+    var file = e.target.files && e.target.files[0];
+    if(!file) return;
+    var sendBtn = document.getElementById("snapSend");
+    sendBtn.disabled = true; sendBtn.textContent = "Обрабатываем фото…";
+    compressImage(file, 800, 0.7).then(function(dataUrl){
+      compressedPhotoData = dataUrl;
+      var preview = document.getElementById("snapPreview");
+      preview.src = dataUrl; preview.style.display = "block";
+      sendBtn.disabled = false; sendBtn.textContent = "Отправить на проверку";
+    }).catch(function(){
+      showToast("Не получилось обработать фото, попробуй другое");
+      sendBtn.textContent = "Отправить на проверку";
+    });
+  });
+
+  document.getElementById("snapCancel").addEventListener("click", function(){
+    document.getElementById("snapModal").classList.remove("show");
+    ui.pendingPhotoFor = null; compressedPhotoData = null;
+  });
+
+  document.getElementById("snapSend").addEventListener("click", function(){
+    if(!compressedPhotoData || !ui.pendingPhotoFor) return;
+    var chore = ui.pendingPhotoFor;
+    var c = activeChild();
+    state.submissions.push({
+      id: genId(), childId: c.id, choreId: chore.id,
+      choreName: chore.name, choreEmoji: chore.emoji, choreValue: chore.value,
+      photo: compressedPhotoData, status: "pending", reason: "",
+      submittedAt: new Date().toLocaleString("ru-RU")
+    });
+    addHistory(c.name+" отправил(а) на проверку: "+chore.emoji+" "+chore.name);
+    saveState();
+    document.getElementById("snapModal").classList.remove("show");
+    ui.pendingPhotoFor = null; compressedPhotoData = null;
+    render();
+    showToast("Отправлено! Жди, когда родители проверят 👀");
+  });
+
+  // ================= PARENT VIEW =================
+  function renderParentView(){
+    var pending = state.submissions.filter(function(s){ return s.status === "pending"; })
+      .sort(function(a,b){ return a.id < b.id ? -1 : 1; });
+
+    var html = '<div class="card"><div class="section-title">📥 На проверку <span class="count-pill">'+pending.length+'</span></div><div class="sub-list">';
+    if(pending.length === 0){
+      html += '<div class="empty-state">Пока никто ничего не отправил на проверку.</div>';
+    } else {
+      pending.forEach(function(s){
+        var child = childById(s.childId);
+        html += '<div class="sub-card" data-sub="'+s.id+'">' +
+          '<img src="'+s.photo+'" data-action="view-photo" alt="Фото">' +
+          '<div class="sub-info">' +
+            '<div class="who">'+(child ? child.emoji+" "+escapeHtml(child.name) : "")+'</div>' +
+            '<div class="what">'+s.choreEmoji+' '+escapeHtml(s.choreName)+' · +'+s.choreValue+' ⭐</div>' +
+            '<div class="when">'+escapeHtml(s.submittedAt)+'</div>' +
+          '</div>' +
+          '<div class="sub-actions">' +
+            '<button class="btn-green" data-action="approve" data-sub="'+s.id+'">✓ Подтвердить</button>' +
+            '<button class="btn-red" data-action="open-reject" data-sub="'+s.id+'">✕ Отклонить</button>' +
+          '</div>' +
+          '<div class="reason-box'+(ui.reasonOpenFor===s.id?" show":"")+'">' +
+            '<textarea placeholder="Почему отклоняешь?" id="reasonText-'+s.id+'"></textarea>' +
+            '<button class="reason-confirm" data-action="confirm-reject" data-sub="'+s.id+'">Отклонить с этой причиной</button>' +
+          '</div>' +
+        '</div>';
+      });
+    }
+    html += '</div></div>';
+
+    html += '<div class="card"><div class="section-title">⚙️ Настройки детей и дел</div><div class="settings-grid">';
+    state.children.forEach(function(c, idx){
+      html += '<div>' +
+        '<div class="name-edit"><span style="font-size:22px;">'+c.emoji+'</span>' +
+          '<input type="text" value="'+escapeHtml(c.name)+'" data-rename="'+idx+'" placeholder="Имя ребёнка">' +
+        '</div>' +
+        '<div style="font-weight:800; color:var(--gold-deep); margin-bottom:8px;">'+c.stars+' ⭐ сейчас</div>' +
+        '<div class="section-title" style="font-size:15px;">Дела</div>' +
+        '<div class="chore-list" style="margin-bottom:10px;">';
+      c.chores.forEach(function(ch){
+        html += '<div class="chore"><div class="emoji">'+ch.emoji+'</div>' +
+          '<div class="name">'+escapeHtml(ch.name)+'</div>' +
+          '<div class="value">+'+ch.value+' ⭐</div>' +
+          '<button class="icon-del" data-action="del-chore" data-child="'+idx+'" data-chore="'+ch.id+'">✕</button>' +
+          '</div>';
+      });
+      html += '</div><div class="add-row">' +
+        '<input type="text" name="name" id="choreName-'+idx+'" placeholder="Новое дело">' +
+        '<input type="text" name="emoji" id="choreEmoji-'+idx+'" placeholder="🧸" maxlength="2" style="width:56px;">' +
+        '<input type="number" name="num" id="choreStars-'+idx+'" placeholder="⭐" min="1" value="1">' +
+        '<button class="btn-dark" data-action="add-chore" data-child="'+idx+'">+ Добавить</button>' +
+        '</div>';
+      html += '<div class="section-title" style="font-size:15px; margin-top:16px;">Награды</div>' +
+        '<div class="reward-list" style="margin-bottom:10px;">';
+      c.rewards.slice().sort(function(a,b){return a.cost-b.cost;}).forEach(function(r){
+        html += '<div class="reward"><div class="emoji">'+r.emoji+'</div>' +
+          '<div class="name">'+escapeHtml(r.name)+'</div>' +
+          '<div class="cost">'+r.cost+' ⭐</div>' +
+          '<button class="icon-del" data-action="del-reward" data-child="'+idx+'" data-reward="'+r.id+'">✕</button>' +
+          '</div>';
+      });
+      html += '</div><div class="add-row">' +
+        '<input type="text" name="name" id="rewardName-'+idx+'" placeholder="Новая награда">' +
+        '<input type="text" name="emoji" id="rewardEmoji-'+idx+'" placeholder="🎁" maxlength="2" style="width:56px;">' +
+        '<input type="number" name="num" id="rewardCost-'+idx+'" placeholder="⭐" min="1" value="10">' +
+        '<button class="btn-dark" data-action="add-reward" data-child="'+idx+'">+ Добавить</button>' +
+        '</div></div>';
+    });
+    html += '</div></div>';
+
+    html += '<div class="card"><div class="section-title">📜 История <span class="count-pill">'+state.history.length+'</span></div>' +
+      '<div style="max-height:220px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--ink-soft);">';
+    if(state.history.length === 0){
+      html += '<div class="empty-state">История пока пуста.</div>';
+    } else {
+      state.history.slice().reverse().slice(0,80).forEach(function(h){
+        html += '<div style="display:flex; justify-content:space-between; gap:10px;"><span>'+escapeHtml(h.text)+'</span><span style="flex-shrink:0">'+escapeHtml(h.date)+'</span></div>';
+      });
+    }
+    html += '</div></div>';
+
+    html += '<div class="card"><div class="section-title">⚙️ Подключение</div>' +
+      '<div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px;">Firebase URL: <code style="font-size:12px;">'+escapeHtml(fbBaseUrl)+'</code></div>' +
+      '<button class="btn-ghost" id="changeFirebaseBtn" style="font-size:13px;">Сменить базу данных</button>' +
+      '</div>';
+
+    html += '<div class="card"><div class="section-title">⚠️ Опасная зона</div>' +
+      '<button class="btn-red" id="resetAllBtn">Сбросить все данные (дела, награды, звёзды, историю)</button>' +
+    '</div>';
+
+    return html;
+  }
+
+  function bindParentView(){
+    document.querySelectorAll('[data-action="view-photo"]').forEach(function(img){
+      img.addEventListener("click", function(){
+        document.getElementById("photoModalImg").src = img.src;
+        document.getElementById("photoModal").classList.add("show");
+      });
+    });
+
+    document.querySelectorAll('[data-action="approve"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var sub = state.submissions.find(function(s){ return s.id === btn.getAttribute("data-sub"); });
+        if(!sub) return;
+        var child = childById(sub.childId);
+        sub.status = "approved";
+        child.stars += sub.choreValue;
+        addHistory(child.name+": подтверждено «"+sub.choreName+"» — +"+sub.choreValue+" ⭐");
+        saveState(); render();
+        showToast("Подтверждено! "+child.name+" получил(а) "+sub.choreValue+" ⭐");
+      });
+    });
+
+    document.querySelectorAll('[data-action="open-reject"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        ui.reasonOpenFor = btn.getAttribute("data-sub");
+        render();
+        var ta = document.getElementById("reasonText-"+ui.reasonOpenFor);
+        if(ta) ta.focus();
+      });
+    });
+
+    document.querySelectorAll('[data-action="confirm-reject"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var id = btn.getAttribute("data-sub");
+        var sub = state.submissions.find(function(s){ return s.id === id; });
+        if(!sub) return;
+        var ta = document.getElementById("reasonText-"+id);
+        sub.status = "rejected";
+        sub.reason = (ta && ta.value.trim()) || "Родители попросили переделать.";
+        sub.seen = false;
+        var child = childById(sub.childId);
+        addHistory(child.name+": отклонено «"+sub.choreName+"» — "+sub.reason);
+        ui.reasonOpenFor = null;
+        saveState(); render();
+        showToast("Отклонено, "+child.name+" увидит причину");
+      });
+    });
+
+    document.querySelectorAll('[data-action="del-chore"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var c = state.children[Number(btn.getAttribute("data-child"))];
+        var choreId = btn.getAttribute("data-chore");
+        var chore = c.chores.find(function(x){ return x.id === choreId; });
+        if(chore && confirm('Удалить дело «'+chore.name+'» у '+c.name+'?')){
+          c.chores = c.chores.filter(function(x){ return x.id !== choreId; });
+          saveState(); render();
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-action="del-reward"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var c = state.children[Number(btn.getAttribute("data-child"))];
+        var rewardId = btn.getAttribute("data-reward");
+        var reward = c.rewards.find(function(x){ return x.id === rewardId; });
+        if(reward && confirm('Удалить награду «'+reward.name+'» у '+c.name+'?')){
+          c.rewards = c.rewards.filter(function(x){ return x.id !== rewardId; });
+          saveState(); render();
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-action="add-chore"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var idx = btn.getAttribute("data-child");
+        var nameEl = document.getElementById("choreName-"+idx);
+        var name = nameEl.value.trim();
+        if(!name){ nameEl.focus(); return; }
+        var val = parseInt(document.getElementById("choreStars-"+idx).value, 10); if(!val||val<1) val=1;
+        var emoji = document.getElementById("choreEmoji-"+idx).value.trim() || "⭐";
+        state.children[idx].chores.push({id:genId(), name:name, emoji:emoji, value:val});
+        saveState(); render();
+      });
+    });
+
+    document.querySelectorAll('[data-action="add-reward"]').forEach(function(btn){
+      btn.addEventListener("click", function(){
+        var idx = btn.getAttribute("data-child");
+        var nameEl = document.getElementById("rewardName-"+idx);
+        var name = nameEl.value.trim();
+        if(!name){ nameEl.focus(); return; }
+        var cost = parseInt(document.getElementById("rewardCost-"+idx).value, 10); if(!cost||cost<1) cost=1;
+        var emoji = document.getElementById("rewardEmoji-"+idx).value.trim() || "🎁";
+        state.children[idx].rewards.push({id:genId(), name:name, emoji:emoji, cost:cost});
+        saveState(); render();
+      });
+    });
+
+    document.querySelectorAll('[data-rename]').forEach(function(input){
+      input.addEventListener("change", function(){
+        var idx = Number(input.getAttribute("data-rename"));
+        var val = input.value.trim();
+        if(val){ state.children[idx].name = val; saveState(); render(); }
+      });
+    });
+
+    var resetBtn = document.getElementById("resetAllBtn");
+    if(resetBtn) resetBtn.addEventListener("click", function(){
+      if(confirm("Точно сбросить ВСЕ данные для обоих детей? Это нельзя отменить.")){
+        var fresh = JSON.parse(JSON.stringify(defaultState));
+        state.children = fresh.children;
+        state.submissions = [];
+        state.history = [];
+        saveState(); render();
+        showToast("Все данные сброшены");
+      }
+    });
+
+    var changeFirebaseBtn = document.getElementById("changeFirebaseBtn");
+    if(changeFirebaseBtn) changeFirebaseBtn.addEventListener("click", function(){
+      if(confirm("Сменить базу данных Firebase? Текущее устройство отключится от семейных данных.")){
+        localStorage.removeItem("fb-base-url");
+        fbBaseUrl = "";
+        stopPolling();
+        render();
+      }
+    });
+  }
+
+  // ---------- Share modal ----------
+  function openShareModal(){
+    document.getElementById("shareUrlBox").textContent = familyUrl();
+    document.getElementById("shareModal").classList.add("show");
+  }
+
+  document.getElementById("copyLinkBtn").addEventListener("click", function(){
+    var url = familyUrl();
+    navigator.clipboard.writeText(url).then(function(){
+      showToast("Ссылка скопирована!");
+    }).catch(function(){
+      // fallback
+      var ta = document.createElement("textarea");
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      showToast("Ссылка скопирована!");
+    });
+  });
+
+  document.getElementById("shareClose").addEventListener("click", function(){
+    document.getElementById("shareModal").classList.remove("show");
+  });
+  document.getElementById("shareModal").addEventListener("click", function(e){
+    if(e.target.id === "shareModal") document.getElementById("shareModal").classList.remove("show");
+  });
+
+  // ---------- Shared modals ----------
+  function openCelebration(reward){
+    document.getElementById("celebrateEmoji").textContent = reward.emoji;
+    document.getElementById("celebrateText").textContent = "«"+reward.name+"» получена! Молодец! 🎉";
+    document.getElementById("celebrate").classList.add("show");
+  }
+  document.getElementById("celebrateClose").addEventListener("click", function(){
+    document.getElementById("celebrate").classList.remove("show");
+  });
+  document.getElementById("celebrate").addEventListener("click", function(e){
+    if(e.target.id === "celebrate") document.getElementById("celebrate").classList.remove("show");
+  });
+  document.getElementById("photoModalClose").addEventListener("click", function(){
+    document.getElementById("photoModal").classList.remove("show");
+  });
+  document.getElementById("photoModal").addEventListener("click", function(e){
+    if(e.target.id === "photoModal") document.getElementById("photoModal").classList.remove("show");
+  });
+
+  // ================= INIT =================
+  if(!fbBaseUrl){
+    render(); // show setup
+  } else {
+    fetchState().then(function(data){
+      if(data){
+        state = data;
+      } else {
+        state = JSON.parse(JSON.stringify(defaultState));
+        pushState();
+      }
+      render();
+      startPolling();
+    }).catch(function(){
+      showToast("Не удалось загрузить данные — проверь интернет");
+      state = JSON.parse(JSON.stringify(defaultState));
+      render();
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
