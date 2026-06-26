@@ -46,7 +46,7 @@
     font-size:clamp(26px,5vw,38px); margin:0; color:var(--ink); letter-spacing:0.5px;
   }
   header.top h1 .dot{color:var(--gold-deep);}
-  .top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .top-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
   button{
     font-family:'Nunito', sans-serif; font-weight:700; border:none;
@@ -63,15 +63,6 @@
   .btn-green{background:var(--green); color:#fff; padding:9px 16px; font-size:14px;}
   .btn-red{background:#fff; color:var(--red); border:2px solid var(--red); padding:9px 16px; font-size:14px;}
 
-  .sync-dot{
-    display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px;
-    background:#ccc;
-  }
-  .sync-dot.ok{background:var(--green);}
-  .sync-dot.err{background:var(--red);}
-  .sync-label{font-size:13px; color:var(--ink-soft); font-weight:600;}
-
-  /* ---------- Mode switch ---------- */
   .mode-switch{display:flex; gap:8px; margin-bottom:18px;}
   .mode-btn{
     flex:1; padding:13px; border-radius:14px; font-family:'Baloo 2',sans-serif;
@@ -80,7 +71,6 @@
   }
   .mode-btn.active{background:var(--ink); color:#fff;}
 
-  /* ---------- Child tabs ---------- */
   .tabs{display:flex; gap:10px; margin-bottom:18px;}
   .tab{
     flex:1; padding:14px 16px; border-radius:16px; border:3px solid transparent;
@@ -98,7 +88,6 @@
 
   .card{background:#fffdf8; border-radius:20px; padding:20px; box-shadow:var(--card-shadow); margin-bottom:18px;}
 
-  /* ---------- Track ---------- */
   .track-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px; gap:10px; flex-wrap:wrap;}
   .track-head .stars-count{font-family:'Baloo 2', sans-serif; font-size:32px; font-weight:800; color:var(--gold-deep);}
   .track-head .stars-count span{font-size:17px; color:var(--ink-soft); font-weight:600;}
@@ -171,24 +160,10 @@
   .name-edit{display:flex; gap:8px; margin-bottom:14px;}
   .name-edit input{flex:1; font-family:'Nunito',sans-serif; font-size:14px; padding:8px 10px; border-radius:10px; border:2px solid var(--line);}
 
-  /* ---------- Lock screen ---------- */
   .lock-wrap{max-width:340px; margin:60px auto; text-align:center;}
   .lock-wrap .emoji{font-size:48px; margin-bottom:10px;}
   .lock-wrap input{width:100%; font-size:16px; padding:12px 14px; border-radius:12px; border:2px solid var(--line); margin:14px 0; text-align:center; font-family:'Nunito',sans-serif;}
   .lock-wrap .err{color:var(--red); font-size:13px; min-height:18px; margin-bottom:6px;}
-
-  /* ---------- Setup screen ---------- */
-  .setup-wrap{max-width:520px; margin:0 auto;}
-  .setup-wrap h2{font-family:'Baloo 2',sans-serif; font-weight:800; font-size:24px; margin:0 0 6px;}
-  .setup-wrap p{color:var(--ink-soft); font-size:14px; margin:0 0 18px; line-height:1.6;}
-  .setup-steps{background:var(--paper-deep); border-radius:14px; padding:16px 18px; margin-bottom:18px;}
-  .setup-steps ol{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px; font-size:14px; line-height:1.5;}
-  .setup-steps a{color:var(--ink); font-weight:700;}
-  .setup-steps code{background:#fffdf8; padding:2px 6px; border-radius:6px; font-size:13px;}
-  .setup-input-row{display:flex; gap:8px; flex-wrap:wrap;}
-  .setup-input-row input{flex:1; min-width:220px; font-family:'Nunito',sans-serif; font-size:14px; padding:11px 14px; border-radius:12px; border:2px solid var(--line); background:#fff;}
-  .setup-err{color:var(--red); font-size:13px; min-height:18px; margin-top:6px;}
-  .setup-footer{margin-top:14px; font-size:13px; color:var(--ink-soft);}
 
   footer{text-align:center; font-size:12px; color:var(--ink-soft); margin-top:30px; opacity:.7;}
 
@@ -207,16 +182,6 @@
   .snap-modal .preview{width:100%; max-height:280px; object-fit:contain; border-radius:14px; margin:10px 0; background:var(--paper-deep);}
   .snap-modal input[type=file]{margin:10px 0;}
   .snap-modal .row{display:flex; gap:10px; justify-content:center; margin-top:14px;}
-
-  /* Share modal */
-  .share-modal{max-width:420px;}
-  .share-url-box{
-    background:var(--paper-deep); border-radius:12px; padding:12px 14px;
-    font-size:13px; word-break:break-all; margin:12px 0; text-align:left;
-    border:2px solid var(--line); font-family:monospace; color:var(--ink);
-    user-select:all;
-  }
-  .share-modal .row{display:flex; gap:8px; justify-content:center; margin-top:4px;}
 
   .toast{
     position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(10px);
@@ -264,25 +229,13 @@
   </div>
 </div>
 
-<div class="overlay" id="shareModal">
-  <div class="modal share-modal">
-    <div class="big-emoji">🔗</div>
-    <h2>Ссылка для семьи</h2>
-    <p style="margin:0 0 4px; font-size:14px; color:var(--ink-soft);">Открой на любом устройстве — данные синхронизируются автоматически.</p>
-    <div class="share-url-box" id="shareUrlBox"></div>
-    <div class="row">
-      <button class="btn-dark" id="copyLinkBtn">📋 Скопировать</button>
-      <button class="btn-ghost" id="shareClose">Закрыть</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
   "use strict";
 
+  var STORAGE_KEY = "star-tracker-state";
   var PARENT_PASSWORD = "семья2026";
   var nextLocalId = 1;
 
@@ -291,28 +244,6 @@
     return Date.now().toString(36) + "-" + nextLocalId.toString(36);
   }
 
-  // ---------- Firebase config ----------
-  var fbBaseUrl = localStorage.getItem("fb-base-url") || "";
-  // Family code lives in URL hash so sharing is just sharing the URL
-  var familyCode = (location.hash || "").replace(/^#/, "").trim();
-  if(!familyCode){
-    familyCode = genRandomCode();
-    location.replace(location.href.split("#")[0] + "#" + familyCode);
-  }
-  localStorage.setItem("family-code", familyCode);
-
-  function genRandomCode(){
-    var chars = "abcdefghjkmnpqrstuvwxyz23456789";
-    var s = "";
-    for(var i=0; i<16; i++) s += chars[Math.floor(Math.random() * chars.length)];
-    return s;
-  }
-
-  function dbUrl(){
-    return fbBaseUrl.replace(/\/$/, "") + "/families/" + familyCode + ".json";
-  }
-
-  // ---------- Default state ----------
   var defaultState = {
     children: [
       { id:0, name:"Амиль", emoji:"🐯", stars:0,
@@ -352,96 +283,40 @@
     pendingPhotoFor: null,
     reasonOpenFor: null
   };
-  var syncOk = false;
-  var lastSaveTime = 0;
-  var pollInterval = null;
 
-  // ---------- Sync ----------
-  function fetchState(){
-    return fetch(dbUrl())
-      .then(function(r){
-        if(!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      })
-      .then(function(data){
-        syncOk = true;
-        if(data && data.children && data.children.length >= 2){
-          if(!data.submissions) data.submissions = [];
-          if(!data.history) data.history = [];
-          return data;
+  // ---------- Storage ----------
+  function loadState(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed.children && parsed.children.length >= 2){
+          if(!parsed.submissions) parsed.submissions = [];
+          if(!parsed.history) parsed.history = [];
+          return parsed;
         }
-        return null;
-      });
-  }
-
-  function pushState(){
-    lastSaveTime = Date.now();
-    return fetch(dbUrl(), {
-      method: "PUT",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify(state)
-    })
-    .then(function(r){
-      if(!r.ok) throw new Error("HTTP " + r.status);
-      syncOk = true;
-      updateSyncIndicator();
-    })
-    .catch(function(err){
-      console.error("Save error:", err);
-      syncOk = false;
-      updateSyncIndicator();
-      showToast("Не удалось сохранить — проверь интернет");
-    });
+      }
+    } catch(e){}
+    return JSON.parse(JSON.stringify(defaultState));
   }
 
   var saveTimer = null;
   function saveState(){
     clearTimeout(saveTimer);
-    saveTimer = setTimeout(pushState, 400);
+    saveTimer = setTimeout(function(){
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch(e){
+        showToast("Не удалось сохранить — хранилище переполнено");
+      }
+    }, 250);
   }
 
-  function startPolling(){
-    stopPolling();
-    pollInterval = setInterval(function(){
-      if(Date.now() - lastSaveTime < 3000) return; // don't overwrite just-saved data
-      fetchState().then(function(data){
-        if(!data) return;
-        // Merge only if remote is newer (simple: compare history length as proxy)
-        var remoteHistLen = (data.history || []).length;
-        var localHistLen = (state.history || []).length;
-        if(remoteHistLen !== localHistLen ||
-           JSON.stringify(data.children) !== JSON.stringify(state.children) ||
-           (data.submissions||[]).length !== (state.submissions||[]).length){
-          state = data;
-          render();
-        }
-        updateSyncIndicator();
-      }).catch(function(){
-        syncOk = false;
-        updateSyncIndicator();
-      });
-    }, 6000);
-  }
-
-  function stopPolling(){
-    if(pollInterval) clearInterval(pollInterval);
-    pollInterval = null;
-  }
-
-  function updateSyncIndicator(){
-    var dot = document.getElementById("syncDot");
-    var lbl = document.getElementById("syncLabel");
-    if(!dot) return;
-    dot.className = "sync-dot " + (syncOk ? "ok" : "err");
-    lbl.textContent = syncOk ? "Синхронизировано" : "Нет связи";
-  }
-
-  // ---------- Utils ----------
   function showToast(msg){
     var t = document.getElementById("toast");
     t.textContent = msg;
     t.classList.add("show");
-    setTimeout(function(){ t.classList.remove("show"); }, 2600);
+    setTimeout(function(){ t.classList.remove("show"); }, 2400);
   }
 
   function escapeHtml(s){
@@ -459,10 +334,6 @@
 
   function activeChild(){ return state.children[ui.activeChild]; }
   function childById(id){ return state.children.find(function(c){ return c.id === id; }); }
-
-  function familyUrl(){
-    return location.href.split("#")[0] + "#" + familyCode;
-  }
 
   // ---------- Image compression ----------
   function compressImage(file, maxDim, quality){
@@ -487,90 +358,9 @@
     });
   }
 
-  // ================= SETUP SCREEN =================
-  function renderSetup(){
-    return '' +
-      '<header class="top"><h1>Трек Звёзд<span class="dot">.</span></h1></header>' +
-      '<div class="setup-wrap">' +
-        '<div class="card">' +
-          '<h2>👋 Добро пожаловать!</h2>' +
-          '<p>Чтобы данные синхронизировались между телефоном мамы, папы и планшетом — нужна бесплатная база данных Firebase. Это займёт ~5 минут, один раз.</p>' +
-          '<div class="setup-steps">' +
-            '<ol>' +
-              '<li>Зайди на <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> (нужен Google-аккаунт)</li>' +
-              '<li>Нажми <b>«Создать проект»</b>, дай любое имя, отключи Analytics, создай</li>' +
-              '<li>В левом меню выбери <b>Сборка → Realtime Database</b></li>' +
-              '<li>Нажми <b>«Создать базу данных»</b>, выбери регион, выбери <b>«Начать в тестовом режиме»</b></li>' +
-              '<li>Скопируй URL базы данных — он выглядит так:<br><code>https://имя-проекта-default-rtdb.firebaseio.com</code></li>' +
-              '<li>Вставь его ниже и нажми <b>«Подключить»</b></li>' +
-            '</ol>' +
-          '</div>' +
-          '<div class="setup-input-row">' +
-            '<input type="url" id="fbUrlInput" placeholder="https://мой-проект-default-rtdb.firebaseio.com" autocomplete="off">' +
-            '<button class="btn-dark" id="setupSaveBtn">Подключить →</button>' +
-          '</div>' +
-          '<div class="setup-err" id="setupErr"></div>' +
-          '<p class="setup-footer">Данные хранятся в твоём собственном Firebase-проекте. Мы не имеем к ним доступа.</p>' +
-        '</div>' +
-      '</div>';
-  }
-
-  function bindSetup(){
-    var input = document.getElementById("fbUrlInput");
-    var btn = document.getElementById("setupSaveBtn");
-    var err = document.getElementById("setupErr");
-
-    function tryConnect(){
-      var val = input.value.trim().replace(/\/$/, "");
-      if(!val || !val.startsWith("https://")){
-        err.textContent = "Введи корректный URL, начинающийся с https://";
-        return;
-      }
-      err.textContent = "";
-      btn.disabled = true;
-      btn.textContent = "Проверяем…";
-      // Test connection
-      fetch(val + "/families/" + familyCode + ".json")
-        .then(function(r){
-          if(!r.ok) throw new Error("HTTP " + r.status);
-          return r.json();
-        })
-        .then(function(data){
-          fbBaseUrl = val;
-          localStorage.setItem("fb-base-url", fbBaseUrl);
-          syncOk = true;
-          if(data && data.children && data.children.length >= 2){
-            state = data;
-            if(!state.submissions) state.submissions = [];
-            if(!state.history) state.history = [];
-          } else {
-            state = JSON.parse(JSON.stringify(defaultState));
-            pushState();
-          }
-          render();
-          startPolling();
-        })
-        .catch(function(e){
-          btn.disabled = false;
-          btn.textContent = "Подключить →";
-          err.textContent = "Не удалось подключиться. Проверь URL и правила доступа (тестовый режим).";
-        });
-    }
-
-    btn.addEventListener("click", tryConnect);
-    input.addEventListener("keydown", function(e){ if(e.key==="Enter") tryConnect(); });
-  }
-
   // ================= RENDER =================
   function render(){
     var app = document.getElementById("app");
-
-    if(!fbBaseUrl){
-      app.innerHTML = renderSetup();
-      bindSetup();
-      return;
-    }
-
     if(ui.mode === "parent" && !ui.parentUnlocked){
       app.innerHTML = renderLockScreen();
       bindLockScreen();
@@ -583,7 +373,6 @@
     bindCommon();
     if(ui.mode === "child") bindChildView();
     else bindParentView();
-    updateSyncIndicator();
   }
 
   function renderHeader(){
@@ -591,8 +380,6 @@
       '<header class="top">' +
         '<h1>Трек Звёзд<span class="dot">.</span></h1>' +
         '<div class="top-actions">' +
-          '<span class="sync-label"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">…</span></span>' +
-          '<button class="btn-ghost" id="shareLinkBtn">🔗 Ссылка</button>' +
           (ui.mode === "parent" ? '<button class="btn-ghost" id="lockBtn">🔒 Выйти</button>' : '') +
         '</div>' +
       '</header>';
@@ -623,9 +410,6 @@
     document.querySelectorAll(".mode-btn").forEach(function(b){
       b.addEventListener("click", function(){ ui.mode = b.getAttribute("data-mode"); render(); });
     });
-    var shareLinkBtn = document.getElementById("shareLinkBtn");
-    if(shareLinkBtn) shareLinkBtn.addEventListener("click", openShareModal);
-
     var input = document.getElementById("parentPass");
     var btn = document.getElementById("unlockBtn");
     function tryUnlock(){
@@ -641,7 +425,6 @@
     btn.addEventListener("click", tryUnlock);
     input.addEventListener("keydown", function(e){ if(e.key === "Enter") tryUnlock(); });
     input.focus();
-    updateSyncIndicator();
   }
 
   function bindCommon(){
@@ -657,8 +440,6 @@
       ui.mode = "child";
       render();
     });
-    var shareLinkBtn = document.getElementById("shareLinkBtn");
-    if(shareLinkBtn) shareLinkBtn.addEventListener("click", openShareModal);
   }
 
   // ================= CHILD VIEW =================
@@ -744,7 +525,7 @@
     var tokenLeft = 14 + pos * cellWidth - (pos > 0 ? cellWidth/2 : -10);
 
     return '' +
-      '<div class="card track-card">' +
+      '<div class="card">' +
         '<div class="track-head">' +
           '<div class="stars-count">'+c.stars+' <span>⭐ звёзд сейчас</span></div>' +
           '<div class="reward-target">'+(nextReward ? 'До «'+escapeHtml(nextReward.name)+'» '+nextReward.emoji+': <b>'+(nextReward.cost - c.stars)+' ⭐</b>' : 'Все награды доступны! 🎉')+'</div>' +
@@ -808,14 +589,13 @@
   // ---------- Snap modal ----------
   function openSnapModal(chore){
     ui.pendingPhotoFor = chore;
-    var modal = document.getElementById("snapModal");
     document.getElementById("snapTitle").textContent = chore.emoji + " " + chore.name;
     document.getElementById("snapSubtitle").textContent = "Сфоткай результат, чтобы родители проверили";
     var preview = document.getElementById("snapPreview");
     preview.style.display = "none"; preview.src = "";
     document.getElementById("snapInput").value = "";
     document.getElementById("snapSend").disabled = true;
-    modal.classList.add("show");
+    document.getElementById("snapModal").classList.add("show");
   }
 
   var compressedPhotoData = null;
@@ -870,7 +650,7 @@
     } else {
       pending.forEach(function(s){
         var child = childById(s.childId);
-        html += '<div class="sub-card" data-sub="'+s.id+'">' +
+        html += '<div class="sub-card">' +
           '<img src="'+s.photo+'" data-action="view-photo" alt="Фото">' +
           '<div class="sub-info">' +
             '<div class="who">'+(child ? child.emoji+" "+escapeHtml(child.name) : "")+'</div>' +
@@ -899,34 +679,32 @@
         '<div style="font-weight:800; color:var(--gold-deep); margin-bottom:8px;">'+c.stars+' ⭐ сейчас</div>' +
         '<div class="section-title" style="font-size:15px;">Дела</div>' +
         '<div class="chore-list" style="margin-bottom:10px;">';
+      if(c.chores.length === 0) html += '<div class="empty-state">Дел пока нет.</div>';
       c.chores.forEach(function(ch){
         html += '<div class="chore"><div class="emoji">'+ch.emoji+'</div>' +
           '<div class="name">'+escapeHtml(ch.name)+'</div>' +
           '<div class="value">+'+ch.value+' ⭐</div>' +
-          '<button class="icon-del" data-action="del-chore" data-child="'+idx+'" data-chore="'+ch.id+'">✕</button>' +
-          '</div>';
+          '<button class="icon-del" data-action="del-chore" data-child="'+idx+'" data-chore="'+ch.id+'">✕</button></div>';
       });
       html += '</div><div class="add-row">' +
         '<input type="text" name="name" id="choreName-'+idx+'" placeholder="Новое дело">' +
         '<input type="text" name="emoji" id="choreEmoji-'+idx+'" placeholder="🧸" maxlength="2" style="width:56px;">' +
         '<input type="number" name="num" id="choreStars-'+idx+'" placeholder="⭐" min="1" value="1">' +
-        '<button class="btn-dark" data-action="add-chore" data-child="'+idx+'">+ Добавить</button>' +
-        '</div>';
-      html += '<div class="section-title" style="font-size:15px; margin-top:16px;">Награды</div>' +
+        '<button class="btn-dark" data-action="add-chore" data-child="'+idx+'">+ Добавить</button></div>';
+      html += '<div class="section-title" style="font-size:15px;margin-top:16px;">Награды</div>' +
         '<div class="reward-list" style="margin-bottom:10px;">';
+      if(c.rewards.length === 0) html += '<div class="empty-state">Наград пока нет.</div>';
       c.rewards.slice().sort(function(a,b){return a.cost-b.cost;}).forEach(function(r){
         html += '<div class="reward"><div class="emoji">'+r.emoji+'</div>' +
           '<div class="name">'+escapeHtml(r.name)+'</div>' +
           '<div class="cost">'+r.cost+' ⭐</div>' +
-          '<button class="icon-del" data-action="del-reward" data-child="'+idx+'" data-reward="'+r.id+'">✕</button>' +
-          '</div>';
+          '<button class="icon-del" data-action="del-reward" data-child="'+idx+'" data-reward="'+r.id+'">✕</button></div>';
       });
       html += '</div><div class="add-row">' +
         '<input type="text" name="name" id="rewardName-'+idx+'" placeholder="Новая награда">' +
         '<input type="text" name="emoji" id="rewardEmoji-'+idx+'" placeholder="🎁" maxlength="2" style="width:56px;">' +
         '<input type="number" name="num" id="rewardCost-'+idx+'" placeholder="⭐" min="1" value="10">' +
-        '<button class="btn-dark" data-action="add-reward" data-child="'+idx+'">+ Добавить</button>' +
-        '</div></div>';
+        '<button class="btn-dark" data-action="add-reward" data-child="'+idx+'">+ Добавить</button></div></div>';
     });
     html += '</div></div>';
 
@@ -936,19 +714,13 @@
       html += '<div class="empty-state">История пока пуста.</div>';
     } else {
       state.history.slice().reverse().slice(0,80).forEach(function(h){
-        html += '<div style="display:flex; justify-content:space-between; gap:10px;"><span>'+escapeHtml(h.text)+'</span><span style="flex-shrink:0">'+escapeHtml(h.date)+'</span></div>';
+        html += '<div style="display:flex;justify-content:space-between;gap:10px;"><span>'+escapeHtml(h.text)+'</span><span style="flex-shrink:0">'+escapeHtml(h.date)+'</span></div>';
       });
     }
     html += '</div></div>';
 
-    html += '<div class="card"><div class="section-title">⚙️ Подключение</div>' +
-      '<div style="font-size:13px; color:var(--ink-soft); margin-bottom:12px;">Firebase URL: <code style="font-size:12px;">'+escapeHtml(fbBaseUrl)+'</code></div>' +
-      '<button class="btn-ghost" id="changeFirebaseBtn" style="font-size:13px;">Сменить базу данных</button>' +
-      '</div>';
-
     html += '<div class="card"><div class="section-title">⚠️ Опасная зона</div>' +
-      '<button class="btn-red" id="resetAllBtn">Сбросить все данные (дела, награды, звёзды, историю)</button>' +
-    '</div>';
+      '<button class="btn-red" id="resetAllBtn">Сбросить все данные (дела, награды, звёзды, историю)</button></div>';
 
     return html;
   }
@@ -1069,46 +841,7 @@
         showToast("Все данные сброшены");
       }
     });
-
-    var changeFirebaseBtn = document.getElementById("changeFirebaseBtn");
-    if(changeFirebaseBtn) changeFirebaseBtn.addEventListener("click", function(){
-      if(confirm("Сменить базу данных Firebase? Текущее устройство отключится от семейных данных.")){
-        localStorage.removeItem("fb-base-url");
-        fbBaseUrl = "";
-        stopPolling();
-        render();
-      }
-    });
   }
-
-  // ---------- Share modal ----------
-  function openShareModal(){
-    document.getElementById("shareUrlBox").textContent = familyUrl();
-    document.getElementById("shareModal").classList.add("show");
-  }
-
-  document.getElementById("copyLinkBtn").addEventListener("click", function(){
-    var url = familyUrl();
-    navigator.clipboard.writeText(url).then(function(){
-      showToast("Ссылка скопирована!");
-    }).catch(function(){
-      // fallback
-      var ta = document.createElement("textarea");
-      ta.value = url;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      showToast("Ссылка скопирована!");
-    });
-  });
-
-  document.getElementById("shareClose").addEventListener("click", function(){
-    document.getElementById("shareModal").classList.remove("show");
-  });
-  document.getElementById("shareModal").addEventListener("click", function(e){
-    if(e.target.id === "shareModal") document.getElementById("shareModal").classList.remove("show");
-  });
 
   // ---------- Shared modals ----------
   function openCelebration(reward){
@@ -1130,24 +863,8 @@
   });
 
   // ================= INIT =================
-  if(!fbBaseUrl){
-    render(); // show setup
-  } else {
-    fetchState().then(function(data){
-      if(data){
-        state = data;
-      } else {
-        state = JSON.parse(JSON.stringify(defaultState));
-        pushState();
-      }
-      render();
-      startPolling();
-    }).catch(function(){
-      showToast("Не удалось загрузить данные — проверь интернет");
-      state = JSON.parse(JSON.stringify(defaultState));
-      render();
-    });
-  }
+  state = loadState();
+  render();
 
 })();
 </script>
